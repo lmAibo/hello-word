@@ -1,6 +1,6 @@
 import paramiko
 
-transport = paramiko.Transport(("172.168.1.1", 22))
+transport = paramiko.Transport(("192.168.1.1", 22))
 transport.connect(username="root")
 transport.auth_none('root')
 # transport.connect(username="root", password="口令", hostkey="密钥")
@@ -13,13 +13,7 @@ client._transport = transport
 # 打开一个Channel并执行命令
 
 
-stdin, stdout, stderr = client.exec_command('df -h;cd /home;ls;sh /home/103.sh ')  # stdout 为正确输出，stderr为错误输出，同时是有1个变量有值
-
-#文件传输
-sftp = paramiko.SFTPClient.from_transport(transport)  # 如果连接需要密钥，则要加上一个参数，hostkey="密钥"
-
-sftp.put('F:/network', '/home/101.txt')  # 将本地的Windows.txt文件上传至服务器/root/Windows.txt
-#文件传输
+stdin, stdout, stderr = client.exec_command('df -h;cd /home;ls')  # stdout 为正确输出，stderr为错误输出，同时是有1个变量有值
 
 #自加代码
 f_out = open('F:/num.txt', 'r+')
@@ -39,10 +33,23 @@ print(b)
 infile = open("F:/network", "r+",encoding='utf-8')  #打开文件
 outfile = open("F:/network1", "w",encoding='utf-8') # 内容输出
 for line in infile:  #按行读文件，可避免文件过大，内存消耗
+      outfile.write(line.replace('192', '172'))  # first is old ,second is new
       outfile.write(line.replace('01', b))#first is old ,second is new
 infile.close()    #文件关闭
 outfile.close()
 #替换字符串结束
+
+
+#文件传输
+sftp = paramiko.SFTPClient.from_transport(transport)  # 如果连接需要密钥，则要加上一个参数，hostkey="密钥"
+
+sftp.put('F:/network1', '/etc/config/network')  # 将本地的network.txt文件上传至服务器/etc/config/network
+
+sftp.put('F:/upall2.sh', '/home/upall2.sh')  # 将本地的upall2.sh文件上传至服务器/home/upall2.sh
+#文件传输
+
+
+
 
 
 
